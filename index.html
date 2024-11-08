@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Tabelas de Pagamento</title>
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Variáveis globais */
+        :root {
+            --color-black: #000000;
+            --color-gray: #808080;
+            --color-gold: #FFD700;
+            --color-light-green: #90EE90;
+            --color-dark-purple: #483D8B;
+            --color-white: #ffffff;
+            --color-background: #f8f8f8;
+            --spacing-sm: 10px;
+            --spacing-md: 15px;
+            --spacing-lg: 20px;
+            --border-radius: 8px;
+            --transition-default: all 0.3s ease;
+        }
+
+        /* Estilos base */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: var(--color-background);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        /* Sistema de tabs */
+        .tabs-primary {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .tabs-primary>div {
+            padding: 12px 24px;
+            background: #222;
+            color: var(--color-white);
+            cursor: pointer;
+            border-radius: var(--border-radius);
+            transition: var(--transition-default);
+        }
+
+        .tabs-primary>div:hover {
+            opacity: 0.9;
+        }
+
+        .tabs-primary>div.active {
+            background: var(--color-black);
+        }
+
+        .tabs-secondary {
+            display: none;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .tabs-secondary.active {
+            display: flex;
+        }
+
+        .tabs-secondary>div {
+            padding: 8px 16px;
+            background: #333;
+            color: var(--color-white);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: var(--transition-default);
+        }
+
+        .tabs-secondary>div:hover {
+            opacity: 0.9;
+        }
+
+        .tabs-secondary>div.active {
+            background: var(--color-black);
+        }
+
+        /* Sistema de cards */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .card-table {
+            background: var(--color-white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: var(--transition-default);
+        }
+
+        /* Bordas específicas para cada tipo */
+        #cf3-content .card-table {
+            border: 5px solid var(--color-black);
+        }
+
+        #cf4-content .card-table {
+            border: 5px solid var(--color-gray);
+        }
+
+        #cfm5-content .card-table {
+            border: 5px solid var(--color-gold);
+        }
+
+        #grf1-content .card-table {
+            border: 5px solid var(--color-light-green);
+        }
+
+        #grf2-content .card-table {
+            border: 5px solid var(--color-dark-purple);
+        }
+
+        .card-header {
+            background: var(--color-background);
+            padding: var(--spacing-md);
+            border-bottom: 1px solid #eee;
+        }
+
+        .card-logos {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 16px;
+            color: #333;
+        }
+
+        /* Tabela de dados */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+
+        td {
+            text-align: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs-primary,
+            .tabs-secondary {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Tabs Principais -->
+        <div class="tabs-primary">
+            <div class="active">NO DIA SEGUINTE</div>
+            <div>NA HORA</div>
+        </div>
+
+        <!-- Tabs Secundárias - Dia Seguinte -->
+        <div id="tabs-dia-seguinte" class="tabs-secondary active">
+            <div class="active">CF3</div>
+            <div>CF4</div>
+            <div>CFM5</div>
+        </div>
+
+        <!-- Tabs Secundárias - Na Hora -->
+        <div id="tabs-na-hora" class="tabs-secondary">
+            <div>GRF1</div>
+            <div>GRF2</div>
+        </div>
+
+        <!-- Conteúdo CF3 -->
+        <div id="cf3-content" class="content-section active">
+            <div class="cards-container">
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="https://gccpay.com.br/wp-content/uploads/2024/10/mastercard.webp" alt="Mastercard" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <img src="https://gccpay.com.br/wp-content/uploads/2024/10/visa.webp" alt="Visa" class="logo-img">
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>1,39%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,20%</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="https://gccpay.com.br/wp-content/uploads/2024/10/hipercard.webp" alt="Elo" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <img src="https://gccpay.com.br/wp-content/uploads/2024/10/amex.webp" alt="Visa" class="logo-img">
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>1,60%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,49%</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="https://gccpay.com.br/wp-content/uploads/2024/10/elo.webp" alt="Internet" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <span class="logo-text">Taxa Web</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>2,00%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,90%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo CF4 -->
+        <div id="cf4-content" class="content-section">
+            <div class="cards-container">
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Mastercard" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Visa" class="logo-img">
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>1,39%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,20%</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Elo" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <span class="logo-text">e outros</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>1,60%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,49%</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Internet" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <span class="logo-text">Taxa Web</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>2,00%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,90%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo CFM5 -->
+        <div id="cfm5-content" class="content-section">
+            <div class="cards-container">
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Mastercard" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Visa" class="logo-img">
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>1,39%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,20%</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Elo" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <span class="logo-text">e outros</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>1,60%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,49%</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Internet" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <span class="logo-text">Taxa Web</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>2,00%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,90%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo GRF1 -->
+        <div id="grf1-content" class="content-section">
+            <div class="cards-container">
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Mastercard" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Visa" class="logo-img">
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>1,39%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,20%</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Elo" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <span class="logo-text">e outros</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>1,60%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,49%</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Internet" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <span class="logo-text">Taxa Web</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>2,00%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,90%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo GRF2 -->
+        <div id="grf2-content" class="content-section">
+            <div class="cards-container">
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Mastercard" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Visa" class="logo-img">
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>1,39%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,20%</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Elo" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <span class="logo-text">e outros</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>1,60%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,49%</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card-table">
+                    <div class="card-header">
+                        <div class="card-logos">
+                            <div class="logo-container">
+                                <img src="/api/placeholder/80/40" alt="Internet" class="logo-img">
+                            </div>
+                            <div class="logo-container">
+                                <span class="logo-text">Taxa Web</span>
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>DÉBITO</td>
+                            <td>2,00%</td>
+                        </tr>
+                        <tr>
+                            <td>CRÉDITO</td>
+                            <td>3,90%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função principal que inicializa o sistema de tabs
+        function initTabSystem() {
+            const primaryTabs = document.querySelectorAll('.tabs-primary > div');
+            const secondaryTabs = {
+                'NO DIA SEGUINTE': document.getElementById('tabs-dia-seguinte'),
+                'NA HORA': document.getElementById('tabs-na-hora')
+            };
+
+            // Mapeamento de tabs para conteúdo
+            const contentMapping = {
+                'CF3': 'cf3-content',
+                'CF4': 'cf4-content',
+                'CFM5': 'cfm5-content',
+                'GRF1': 'grf1-content',
+                'GRF2': 'grf2-content'
+            };
+
+            // Função para mostrar conteúdo específico
+            function showContent(contentId) {
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                const contentElement = document.getElementById(contentId);
+                if (contentElement) {
+                    contentElement.classList.add('active');
+                }
+            }
+
+            // Função para gerenciar tabs primárias
+            function handlePrimaryTabClick(tab) {
+                primaryTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                Object.values(secondaryTabs).forEach(tabGroup => {
+                    tabGroup.classList.remove('active');
+                });
+
+                const activeSecondary = secondaryTabs[tab.textContent.trim()];
+                if (activeSecondary) {
+                    activeSecondary.classList.add('active');
+                    const firstSecondaryTab = activeSecondary.querySelector('div');
+                    if (firstSecondaryTab) {
+                        activeSecondary.querySelectorAll('div').forEach(t => t.classList.remove('active'));
+                        firstSecondaryTab.classList.add('active');
+                        showContent(contentMapping[firstSecondaryTab.textContent.trim()]);
+                    }
+                }
+            }
+
+            // Função para gerenciar tabs secundárias
+            function handleSecondaryTabClick(tab, tabs) {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                showContent(contentMapping[tab.textContent.trim()]);
+            }
+
+            // Event listeners para tabs primárias
+            primaryTabs.forEach(tab => {
+                tab.addEventListener('click', () => handlePrimaryTabClick(tab));
+            });
+
+            // Event listeners para tabs secundárias
+            Object.values(secondaryTabs).forEach(tabGroup => {
+                const tabs = tabGroup.querySelectorAll('div');
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => handleSecondaryTabClick(tab, tabs));
+                });
+            });
+
+            // Inicializar primeira tab como ativa
+            const firstPrimaryTab = primaryTabs[0];
+            const firstTabContent = secondaryTabs[firstPrimaryTab.textContent.trim()];
+            const firstSecondaryTab = firstTabContent.querySelector('div');
+            if (firstSecondaryTab) {
+                showContent(contentMapping[firstSecondaryTab.textContent.trim()]);
+            }
+        }
+
+        // Inicializar quando o DOM estiver carregado
+        document.addEventListener('DOMContentLoaded', initTabSystem);
+    </script>
+</body>
+
+</html>
